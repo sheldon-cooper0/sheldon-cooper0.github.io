@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互式按钮音频播放器</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            background-color: #6a0dad;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+        }
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #6a0dad;
+            padding: 10px;
+            min-height: 80px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .yellow {
+            background-color: #ffeb3b;
+        }
+        .purple {
+            background-color: #9c27b0;
+            color: #ffffff;
+        }
+        .button:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .loading {
+            position: relative;
+            color: transparent;
+        }
+        .loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 500px) {
+            .button-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button class="button purple" onclick="playAudio('man.mp3')">MAN</button>
+        <button class="button yellow" onclick="playAudio('hahaha.mp3')">HAHAHA</button>
+        <button class="button yellow" onclick="playAudio('whatcanisay.mp3')">WHAT CAN I SAY</button>
+        <button class="button purple" onclick="playAudio('seeyouagain.mp3')">SEE YOU AGAIN</button>
+    </div>
+
+    <script>
+        let currentAudio = null;
+        
+        function playAudio(audioFile) {
+            const button = event.target;
+            const originalText = button.textContent;
+            
+            // 显示加载状态
+            button.classList.add('loading');
+            
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            
+            currentAudio = new Audio(audioFile);
+            
+            currentAudio.addEventListener('canplaythrough', () => {
+                button.classList.remove('loading');
+                button.textContent = originalText;
+                currentAudio.play();
+            });
+            
+            currentAudio.addEventListener('error', () => {
+                button.classList.remove('loading');
+                button.textContent = '加载失败';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>
